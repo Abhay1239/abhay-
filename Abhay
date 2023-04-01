@@ -1,0 +1,50 @@
+Telegram Music/Video Player Bot.
+
+
+Abhay Kumar
+Music and video player bot for telegram coding 
+
+To create a music and video player bot for Telegram, you'll need to follow these general steps:
+
+Create a Telegram bot account and obtain the API token.
+Set up a server with the necessary software to run your bot (e.g. Python, ffmpeg).
+Write a script to handle user input and respond with music and video playback.
+Implement functionality for handling user requests such as play, pause, stop, skip, volume control, and playlist management.
+Use the Telegram API to interact with users, receive commands, and send messages.
+Here's a sample Python code for the music and video player bot:
+
+python
+Copy code
+import telebot
+import os
+from dotenv import load_dotenv
+
+load_dotenv()  # load environment variables from .env file
+
+bot = telebot.TeleBot(os.getenv('TELEGRAM_API_TOKEN'))  # initialize Telegram bot with API token
+
+
+@bot.message_handler(commands=['start'])
+def handle_start(message):
+    bot.send_message(message.chat.id, 'Hello! Send me a music or video file to play.')
+
+
+@bot.message_handler(content_types=['audio', 'document', 'video'])
+def handle_media(message):
+    chat_id = message.chat.id
+    file_id = message.document.file_id
+    file_type = message.document.mime_type.split('/')[0]
+    file_extension = message.document.file_name.split('.')[-1]
+
+    if file_type == 'audio':
+        bot.send_message(chat_id, 'Playing audio...')
+        bot.send_audio(chat_id, file_id)
+    elif file_type == 'video':
+        bot.send_message(chat_id, 'Playing video...')
+        bot.send_video(chat_id, file_id)
+    else:
+        bot.send_message(chat_id, 'Sorry, I can only play audio or video files.')
+
+
+if __name__ == '__main__':
+    bot.polling()
